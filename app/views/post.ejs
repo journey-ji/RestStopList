@@ -1,0 +1,53 @@
+<%- include('./header.ejs') %>
+        <!-- Page Content-->
+        <div class="container">
+            <br>
+
+            <div class="ui raised segment">
+                <div class="ui blue fluid card">
+                    <div class="content">
+                        <table border="1" width="800" align="center">
+                            <tr align="center">
+                                <p>
+                                    <td colspan="3">게시판</td>
+                                </p>
+                            </tr>
+                            <tr align="center">
+                                <td>번호</td>
+                                <td>제목</td>
+                                <td>작성자</td>
+                                <td>작성일</td>
+                            </tr>
+                            <div class="ui very relaxed selection celled list">
+                                <% var noStart = posts.length; for(var i=0; i < posts.length; i++){ var curTitle=posts[i]._doc.title;
+                                    var curNo=noStart - i; var createdDate = posts[i]._doc.created_at.toLocaleString(); curWriter = posts[i]._doc.writer;%>
+                                    <tr align="center">
+                                        <td>
+                                            <%= curNo %>
+                                        </td>
+                                        <td>
+                                            <div class="fourteen wide column" onclick="javascript:window.location='/showpost/<%=posts[i]._id %>'">
+                                            <%= curTitle %>
+                                        </td>
+                                        <td>
+                                            <%= curWriter %>
+                                        </td>
+                                        <td><%=createdDate%></td>
+                                    </tr>
+                                    <% } %>
+                            </div>
+                        </table>
+
+
+
+
+                        <br><br>
+                        <a class="ui button" href='/postadd'>글쓰기</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer-->
+    <%- include('./footer.ejs') %>

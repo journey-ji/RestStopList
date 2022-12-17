@@ -1,0 +1,172 @@
+<%- include('./header.ejs') %>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>    
+        var LPG_Reststop_List2 = [];  
+                fetch('http://data.ex.co.kr/openapi/business/lpgServiceAreaInfo?key=6806352377&type=json&numOfRows=1000').then(function (response) {
+                    method: 'GET';
+                    body: JSON.stringify(this.obj)
+                    response.text().then(function (text) {
+            
+                    //쓸데없는 데이터를 제거하여 필요한 데이터만 정리하기
+                    index_1 = text.indexOf('[')
+                    index_2 = text.indexOf(']')
+                    mdata = text.substr(index_1 + 1, index_2 - index_1 - 1)
+            
+                    //text data -> array data
+                    // },를 기준으로 하여 split으로 각 데이터셋 {}이 array의 원소가 되도록 array를 생성하기
+                    mmdata = mdata.split('},');
+            
+                    //휴게소 이름들만 데이터리스트에서 추출해 LPG_Reststop_List 어레이에 넣기 
+                
+                    //mmdata의 길이만큼 반복
+                    for(let i=0; i<mmdata.length; i++){
+                      
+                      //휴게소 이름만 데이터리스트에서 추출하기
+                      index_3 = mmdata[i].indexOf('"serviceAreaName":"')
+                      index_4 = mmdata[i].indexOf(',"routeCode":"') 
+                      ReststopName = mmdata[i].substr(index_3+19, index_4-index_3-20)
+                      
+                      //휴게소 이름을 어레이에 추가
+                      LPG_Reststop_List2.push(ReststopName)}
+                })
+         })
+        $(function() {
+
+            var repo_list = ["용인휴게소","서울휴게소","여주휴게소",];
+            $("#name").autocomplete({
+                source: LPG_Reststop_List2,
+                select: function(event, ui) {
+                        console.log(ui.item);
+                },
+                focus: function(event, ui) {
+                        return false;
+                        //event.preventDefault();
+                }
+        });});
+    </script>
+
+
+            <!-- Header-->
+            <header class="py-5">
+                <div class="container px-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 col-xxl-6">
+                            <div class="text-center my-5">
+                                <h1 class="fw-bolder mb-3">LPG 충전소</h1>
+                                <p class="lead fw-normal text-muted mb-4">Just search the name of the rest stop,<br>You'll find out the LPG filling station of the rest area.</p>
+                               
+                                <!--검색 버튼으로 검색할 휴게소 이름 입력 받기-->
+                                <p><input type="text" placeholder="휴게소 이름" id="name"><input type="button"  onclick="ShowLPG()" value="확인"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            
+            <!--bar-->  
+            <section class="py-3 bg-light" id="scroll-target">
+                <div class="container px-1 my-1">
+                    <div class="text-center">
+                        <center><p><h3 class="fw-bolder"><reststop_name></reststop_name></h3></p></center>
+                        <center><hr style ="height:2px; width: 55%"></hr></center>
+                        <center><p><h5 class="fw-bolder"><bar1></bar1></h5></p></center>
+                        <div class="container px-1 my-1"><h6 class="lead fw-normal text-muted mb-4"><bar_1></bar_1></h6><div>
+                        <center><hr style ="height:2px; width: 15%"></hr></center>
+                        <center><p><h5 class="fw-bolder"><bar2></bar2></h5></p></center>
+                        <div class="container px-1 my-1"><h6 class="lead fw-normal text-muted mb-4"><bar_2></bar_2></h6><div>
+                    </div>
+                    </div>
+            </section>  
+
+
+            <script>
+
+                //LPG 휴게소 open api는 LPG휴게소가 존재하는 데이터 리스트만 가지고 있음
+                //따라서 fetch를 총 두 번 진행하여 첫번째에서는 LPG 휴게소 리스트를 받아와 그 중 휴게소 이름만 추출하여 리스트로 만들고
+                //웹 페이지에서 검색하고자 하는 휴게소 이름을 입력받아 만약 이름이 LPG휴게소 리스트에 있다면 
+                //'LPG 충전소가 있습니다'를, 없다면 'LPG 충전소가 없습니다'를 출력하도록 함
+                
+            
+
+                //fetch로 전체 데이터 리스트를 text형태로 끌어오기
+                function ShowLPG() {
+
+                //사용자가 입력한 휴게소 이름의 값을 name 변수에 할당    
+                name = document.getElementById('name').value 
+
+                //bar부분에 휴게소 이름 출력
+                document.querySelector('reststop_name').innerHTML = name;
+
+                document.querySelector('bar1').innerHTML = 'LPG 충전소 여부';
+                document.querySelector('bar2').innerHTML = '브랜드';
+
+                var LPG_Reststop_List = [];  
+                fetch('http://data.ex.co.kr/openapi/business/lpgServiceAreaInfo?key=6806352377&type=json&numOfRows=1000').then(function (response) {
+                    method: 'GET';
+                    body: JSON.stringify(this.obj)
+                    response.text().then(function (text) {
+            
+                    //쓸데없는 데이터를 제거하여 필요한 데이터만 정리하기
+                    index_1 = text.indexOf('[')
+                    index_2 = text.indexOf(']')
+                    mdata = text.substr(index_1 + 1, index_2 - index_1 - 1)
+            
+                    //text data -> array data
+                    // },를 기준으로 하여 split으로 각 데이터셋 {}이 array의 원소가 되도록 array를 생성하기
+                    mmdata = mdata.split('},');
+            
+                    //휴게소 이름들만 데이터리스트에서 추출해 LPG_Reststop_List 어레이에 넣기 
+                
+                    //mmdata의 길이만큼 반복
+                    for(let i=0; i<mmdata.length; i++){
+                      
+                      //휴게소 이름만 데이터리스트에서 추출하기
+                      index_3 = mmdata[i].indexOf('"serviceAreaName":"')
+                      index_4 = mmdata[i].indexOf(',"routeCode":"') 
+                      ReststopName = mmdata[i].substr(index_3+19, index_4-index_3-20)
+                      
+                      //휴게소 이름을 어레이에 추가
+                      LPG_Reststop_List.push(ReststopName)}
+            
+                    Exist='LPG 충전소가 없습니다'
+                    for(let j=0; j<LPG_Reststop_List.length; j++){
+                        if(name==LPG_Reststop_List[j]){
+                            Exist = 'LPG 충전소가 있습니다'
+                    }}
+                    document.querySelector('bar_1').innerHTML =String(Exist)
+                    
+                })
+                  })
+                
+                    //두번째 fetch에서는 name에 해당하는 주유소 브랜드 이름만 끌어오기
+                    fetch('http://data.ex.co.kr/openapi/business/lpgServiceAreaInfo?key=6806352377&type=json&serviceAreaName=' +  name  + '&numOfRows=1000').then(function (response) {
+                      method: 'GET';
+                      body: JSON.stringify(this.obj)
+                      response.text().then(function (text) {
+            
+                      //text data->array data로 변환
+                      //데이터를 깔끔하게 정리
+                      index1 = text.indexOf('[')
+                      index2 = text.indexOf(']')
+                      ndata = text.substr(index1 + 1, index2 - index1 - 1)
+                      nndata = ndata.split('},');
+            
+                      //Lpg 충전소 브랜드 이름
+                      for (let k = 0; k < nndata.length; k++) {
+                        index3 = nndata[k].indexOf('"oilCompany":"')
+                        nnndata = nndata[k].substr(index3)
+                        index4 = nnndata.indexOf(',')
+                        Lpgname = nnndata.substr(14, index4-15)
+                        
+                        //HTML화면에 띄우기
+                        document.querySelector('bar_2').innerHTML = String(Lpgname)
+                      }
+                  })
+                  })    
+                }
+              </script>
+
+
+<%- include('./footer.ejs') %>

@@ -1,0 +1,44 @@
+<%- include('./header.ejs') %>
+
+        <!-- Page Content-->
+        <div class="ui raised segment">
+            <a class="ui blue ribbon label">게시판</a>
+              <span id="board_title"><%=title %></span>
+        
+            
+            <div class="ui blue fluid card">
+                 <div class="content">
+                    <% 
+                       var curTitle = posts._doc.title;
+                       var curContents = posts._doc.contents;
+                       var curWriter = posts._doc.writer;
+                        
+                       var entities = new Entities();
+                       
+                       var decodedContents = entities.decode(curContents);
+                    %>
+                    
+                    <div id="titleOutput" class="header"><%=curTitle %></div>
+                       <div class="meta">
+                             <span class="right floated time">1일전</span>
+                             <span class="category">일반</span>
+                       </div>
+                       <div id="contentsOutput" class="description">
+                       <%=decodedContents %>
+                    </div>
+                 </div>
+                  <div class="extra content">
+                    <div class="right floated author">
+                           <%=curWriter %>
+                    </div>
+                  </div>
+                
+            </div>
+            
+            <br><br><a class="ui button" href='/post'>글 목록</a>
+            
+        </div>
+
+    </main>
+    <!-- Footer-->
+    <%- include('./footer.ejs') %>
